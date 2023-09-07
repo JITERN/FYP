@@ -1,0 +1,14 @@
+<launch>
+
+    <!-- View robot description in RViz -->
+
+    <arg name="xacro_file"  default="$(find my_robot_description)/urdf/my_robot.xacro"/>
+    <arg name="rviz_file"   default="$(find my_robot_description)/rviz/view.rviz"/>
+
+    <include file="$(find my_robot_description)/launch/model.launch">
+        <arg name="xacro_file"  value="$(arg xacro_file)"/>
+    </include>
+
+    <node name="rviz" pkg="rviz" type="rviz" args="-d $(arg rviz_file)"/>
+
+</launch>

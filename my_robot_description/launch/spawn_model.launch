@@ -1,0 +1,21 @@
+<launch>
+
+    <arg name="xacro_file"  default="$(find my_robot_description)/urdf/my_robot.xacro"/>
+    <arg name="model_name"  default="my_robot"/>
+    <arg name="x"           default="0"/>
+    <arg name="y"           default="0"/>
+    <arg name="z"           default="0"/>
+    <arg name="roll"        default="0"/>
+    <arg name="pitch"       default="0"/>
+    <arg name="yaw"         default="0"/>
+
+    <include file="$(find my_robot_description)/launch/model.launch">
+        <arg name="xacro_file"  value="$(arg xacro_file)"/>
+    </include>
+
+    <node name="$(arg model_name)_spawn" pkg="gazebo_ros" type="spawn_model" output="screen"
+          args="-urdf -param robot_description -model $(arg model_name) 
+                -x $(arg x) -y $(arg y) -z $(arg z)
+                -R $(arg roll) -P $(arg pitch) -Y $(arg yaw)" />
+
+</launch>

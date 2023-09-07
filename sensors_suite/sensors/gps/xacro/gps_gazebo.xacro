@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<robot name="sensor" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <xacro:macro name="gazebo_gps" params="name reference_link topic_name frame_name rate ref_latitude ref_longitude ref_altitude ref_heading"> 
+    <gazebo>
+      <plugin name="sensor_${name}" filename="libhector_gazebo_ros_gps.so">
+        <updateRate>${rate}</updateRate>
+        <bodyName>${reference_link}</bodyName>
+        <frameId>${frame_name}</frameId>
+        <topicName>${topic_name}</topicName>
+        <velocityTopicName>${topic_name}_velocity</velocityTopicName>
+        <referenceLatitude>${ref_latitude}</referenceLatitude>
+        <referenceLongitude>${ref_longitude}</referenceLongitude>
+        <referenceHeading>${ref_heading}</referenceHeading>
+        <referenceAltitude>${ref_altitude}</referenceAltitude>
+        <offset>0 0 0</offset>
+        <drift>0.0001 0.0001 0.0001</drift>
+        <gaussianNoise>0.05 0.05 0.05</gaussianNoise>
+        <velocityDrift>0.0001 0.0001 0.0001</velocityDrift>
+        <velocityGaussianNoise>0.05 0.05 0.05</velocityGaussianNoise>
+        <!-- <drift>0.001 0.001 0.001</drift> -->
+        <!-- <gaussianNoise>0.01 0.01 0.01</gaussianNoise> -->
+        <!-- <velocityDrift>0 0 0</velocityDrift> -->
+        <!-- <velocityGaussianNoise>0.05 0.05 0.05</velocityGaussianNoise> -->
+      </plugin>
+    </gazebo>
+  </xacro:macro>
+
+</robot>

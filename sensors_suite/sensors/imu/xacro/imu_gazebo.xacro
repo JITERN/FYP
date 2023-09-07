@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <xacro:macro name="gazebo_imu" params="name reference_link topic_name frame_name rate visualize sensor_plugin">
+    
+    <xacro:unless value="${sensor_plugin}">
+      <gazebo>
+        <plugin filename="libgazebo_ros_imu.so" name="sensor_${name}">
+          <alwaysOn>true</alwaysOn>
+          <bodyName>${reference_link}</bodyName>
+          <topicName>${topic_name}</topicName>
+          <serviceName>${name}_imu_service</serviceName>
+          <gaussianNoise>0.0</gaussianNoise>
+          <updateRate>${rate}</updateRate>
+        </plugin>
+      </gazebo>
+    </xacro:unless>
+
+    <xacro:if value="${sensor_plugin}">
+      <gazebo reference="${reference_link}">
+        <gravity>true</gravity>
+        <sensor type="imu" name="sensor_${name}">
+          <always_on>true</always_on>
+          <visualize>${visualize}</visualize>
+          <update_rate>${rate}</update_rate>
+          <topic>__default_topic__</topic>
+          <plugin filename="libgazebo_ros_imu_sensor.so" name="imu_plugin">
+            <topicName>${topic_name}</topicName>
+            <bodyName>${reference_link}</bodyName>
+            <updateRateHZ>${rate}</updateRateHZ>
+            <gaussianNoise>0.0</gaussianNoise>
+            <xyzOffset>0 0 0</xyzOffset>
+            <rpyOffset>0 0 0</rpyOffset>
+            <frameName>${frame_name}</frameName>
+            <initialOrientationAsReference>false</initialOrientationAsReference>
+          </plugin>
+          <pose>0 0 0 0 0 0</pose>
+        </sensor>
+      </gazebo>
+    </xacro:if>  
+  
+  </xacro:macro>
+</robot>

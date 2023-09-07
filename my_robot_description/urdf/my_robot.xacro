@@ -1,0 +1,142 @@
+<?xml version="1.0"?>
+<robot name="model_c" xmlns:xacro="https://www.ros.org/wiki/xacro" >
+
+  <xacro:include filename="$(find my_robot_description)/urdf/properties.xacro"/>
+  <xacro:include filename="$(find my_robot_description)/urdf/macros.xacro"/>
+  <xacro:include filename="$(find my_robot_description)/urdf/my_robot.gazebo"/>
+  <xacro:include filename="$(find sensors)/sensor_macro.xacro"/>
+
+  <material name="light_black">
+    <color rgba="0.1 0.1 0.1 1.0"/>
+  </material>
+
+  <material name="orange">
+    <color rgba="${255/255} ${108/255} ${10/255} 1.0"/>
+  </material>
+
+  <link name="base_footprint"/>
+  <joint type="fixed" name="base_joint">
+    <origin xyz="-${baseLength/2-wheelRadius} 0 ${wheelRadius}"  rpy="0 0 0"/>
+    <parent link="base_footprint"/>
+    <child link="base_link"/>
+  </joint>
+
+  <link name="base_link">
+    <visual>
+      <origin xyz="0 0 ${baseHeight/2}" rpy="0 0 0"/>
+      <geometry>
+        <box size="${baseLength} ${baseWidth} ${baseHeight}"/>
+      </geometry>
+      <material name="orange"/>
+    </visual>
+
+    <collision>
+      <origin xyz="0 0 ${baseHeight/2}" rpy="0 0 0"/>
+      <geometry>
+        <box size="${baseLength} ${baseWidth} ${baseHeight}"/>
+      </geometry>
+    </collision>
+
+    <inertial>
+      <origin xyz="0 0 ${baseHeight/2}" rpy="0 0 0"/>
+      <mass value="${baseMass}"/>
+      <xacro:box_inertia m="${baseMass}" x="${baseLength}" y="${baseWidth}" z="${baseHeight}"/>
+    </inertial>
+  </link>
+
+  <link name="caster_wheel">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <sphere radius="${casterRadius}"/>
+      </geometry>
+      <material name="light_black"/>
+    </visual>
+
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <sphere radius="${casterRadius}"/>
+      </geometry>
+    </collision>
+
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="${casterMass}"/>
+      <xacro:sphere_inertia m="${casterMass}" r="${casterRadius}"/>
+    </inertial>
+  </link>
+
+  <joint name="caster_joint"  type="fixed">
+    <origin xyz="${-(baseLength/2-casterRadius)} 0 ${-(wheelRadius-casterRadius)}" rpy="0 0 0"/>
+    <parent link="base_link"/>
+    <child link="caster_wheel"/>
+  </joint>
+
+  <link name="wheel_left">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 1.5707 1.5707"/>
+      <geometry>
+        <cylinder length="${wheelWidth}" radius="${wheelRadius}"/>
+      </geometry>
+      <material name="light_black"/>
+    </visual>
+
+    <collision>
+      <origin xyz="0 0 0" rpy="0 1.5707 1.5707"/>
+      <geometry>
+        <cylinder length="${wheelWidth}" radius="${wheelRadius}"/>
+      </geometry>
+    </collision>
+
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 1.5707 1.5707"/>
+      <mass value="${wheelMass}"/>
+      <xacro:cylinder_inertia m="${wheelMass}" r="${wheelRadius}" h="${wheelWidth}"/>
+    </inertial>
+  </link>
+
+  <link name="wheel_right">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 1.5707 1.5707"/>
+      <geometry>
+        <cylinder length="${wheelWidth}" radius="${wheelRadius}"/>
+      </geometry>
+      <material name="light_black"/>
+    </visual>
+
+    <collision>
+      <origin xyz="0 0 0" rpy="0 1.5707 1.5707"/>
+      <geometry>
+        <cylinder length="${wheelWidth}" radius="${wheelRadius}"/>
+      </geometry>
+    </collision>
+
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 1.5707 1.5707"/>
+      <mass value="${wheelMass}"/>
+      <xacro:cylinder_inertia m="${wheelMass}" r="${wheelRadius}" h="${wheelWidth}"/>
+    </inertial>
+  </link>
+
+  <joint name="wheel_left_joint" type="continuous">
+    <origin xyz="0 ${baseWidth/2+wheelWidth/2} ${wheelRadius}"  rpy="0 0 0"/>
+    <parent link="base_footprint"/>
+    <child link="wheel_left"/>
+    <axis xyz="0 1 0" rpy="0 0 0"/>
+    <limit effort="1000" velocity="1000" />
+    <dynamics damping="0.0" friction="0.05" />
+    <joint_properties damping="0.0" friction="0.0"/>
+  </joint>
+
+  <joint name="wheel_right_joint" type="continuous">
+    <origin xyz="0 ${-(baseWidth/2+wheelWidth/2)} ${wheelRadius}"  rpy="0 0 0"/>
+    <parent link="base_footprint"/>
+    <child link="wheel_right"/>
+    <axis xyz="0 1 0" rpy="0 0 0"/>
+    <limit effort="1000" velocity="1000" />
+    <dynamics damping="0.0" friction="0.05" />
+    <joint_properties damping="0.0" friction="0.0"/>
+  </joint>
+
+</robot>

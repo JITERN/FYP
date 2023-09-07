@@ -1,0 +1,15 @@
+<launch>
+
+    <arg name="xacro_file"  default="$(find my_robot_description)/urdf/my_robot.xacro"/>
+
+    <!-- robot description -->
+    <param name="robot_description" command="$(find xacro)/xacro $(arg xacro_file)"/>
+
+    <!-- robot state -->
+    <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"/>
+
+    <!-- joint state -->
+    <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" />
+    <!-- <node name="joint_state_publisher" pkg="joint_state_publisher_gui" type="joint_state_publisher_gui" /> -->
+
+</launch>

@@ -1,0 +1,31 @@
+<?xml version="1.0" ?>
+
+<robot name="model_c" xmlns:xacro="https://www.ros.org/wiki/xacro">
+
+  <xacro:include filename="$(find my_robot_description)/urdf/my_robot.xacro"/>
+
+  <xacro:sensor_rplidarA3 name="lidar" 
+                          parent="base_link" 
+                          x="0.1" y="0" z="0.15" 
+                          roll="0" pitch="0" yaw="0"
+                          topic_name="scan"
+                          min_angle="-3.14" max_angle="3.14"  
+                          visualize="false"
+  />
+
+  <xacro:sensor_rsD435 prefix="camera" 
+                       parent="base_link" 
+                       x="0" y="0" z="0.5" 
+                       roll="0" pitch="0" yaw="0"
+                       visualize="false"
+  />
+
+  <xacro:VLP-16 parent="base_link" name="velodyne" topic="/velodyne_points"  hz="10" samples="440" >
+    <origin xyz="0 0 0.4" rpy="0 0 0" />
+  </xacro:VLP-16>
+
+  <!-- <xacro:HDL-32E parent="base_link" name="velodyne2" topic="/velodyne_points2" organize_cloud="${organize_cloud}" hz="10" samples="220" gpu="${gpu}">
+    <origin xyz="0 0 0.6" rpy="0 0 0" />
+  </xacro:HDL-32E> -->
+
+</robot>
