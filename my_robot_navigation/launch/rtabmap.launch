@@ -1,28 +1,35 @@
 <launch>
-    <!-- Set parameters -->
-    <arg name="depth_topic" default="/camera/aligned_depth_to_color/image_raw" />
-    <arg name="rgb_topic" default="/camera/color/image_raw" />
-    <arg name="camera_info_topic" default="/camera/color/camera_info" />
-    <arg name="approx_sync" default="true" />
-    <arg name="rviz" default="true" />
-    <arg name="rtabmap_viz" default="false" />
-    <arg name="visual_odometry" default="false" />
-    <arg name="odom_topic" default="/odom" />
-    <arg name="rviz_cfg" default="$(find my_robot_navigation)/rviz/rtabmap.rviz" />
-    <arg name="rtabmap_args" default="--delete_db_on_start"/>
+  <group ns="rtabmap">
 
-    <!-- Include rtabmap.launch with specified parameters -->
-    <include file="$(find rtabmap_ros)/launch/rtabmap.launch">
-        <arg name="depth_topic" value="$(arg depth_topic)" />
-        <arg name="rgb_topic" value="$(arg rgb_topic)" />
-        <arg name="camera_info_topic" value="$(arg camera_info_topic)" />
-        <arg name="approx_sync" value="$(arg approx_sync)" />
-        <arg name="rviz" value="$(arg rviz)" />
-        <arg name="rtabmap_viz" value="$(arg rtabmap_viz)" />
-        <arg name="visual_odometry" value="$(arg visual_odometry)" />
-        <arg name="odom_topic" value="$(arg odom_topic)" />
-        <arg name="rviz_cfg"  value="$(arg rviz_cfg)" />
-        <arg name="rtabmap_args"  value="$(arg rtabmap_args)" />
-    </include>
+    <node pkg="nodelet" type="nodelet" name="rgbd_sync" args="standalone rtabmap_sync/rgbd_sync" output="screen">
+      <remap from="rgb/image"       to="/camera/color/image_raw"/>
+      <remap from="depth/image"     to="/camera/depth/image_raw"/>
+      <remap from="rgb/camera_info" to="/camera/color/camera_info"/>
+      <remap from="rgbd_image"      to="rgbd_image"/> <!-- output -->
+      
+      <!-- Should be true for not synchronized camera topics 
+           (e.g., false for kinectv2, zed, realsense, true for xtion, kinect360)-->
+      <param name="approx_sync"       value="true"/> 
+      <param name="approx_sync_max_interval"       value="0.05"/> 
 
+    </node>
+
+    <node name="rtabmap" pkg="rtabmap_slam" type="rtabmap" output="screen" args="--delete_db_on_start">
+          <param name="frame_id" type="string" value="base_link"/>
+
+          <param name="subscribe_depth" type="bool" value="false"/>
+          <param name="subscribe_rgbd" type="bool" value="true"/>
+
+          <remap from="odom" to="/odometry/filtered"/>
+
+          <remap from="rgbd_image" to="rgbd_image"/>
+
+          <param name="queue_size" type="int" value="10"/>
+
+          <!-- RTAB-Map's parameters -->
+          <param name="RGBD/AngularUpdate"        type="string" value="0.01"/>
+          <param name="RGBD/LinearUpdate"         type="string" value="0.01"/>
+          <param name="RGBD/OptimizeFromGraphEnd" type="string" value="false"/>
+    </node>
+  </group>
 </launch>

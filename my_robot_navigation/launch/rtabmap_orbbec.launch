@@ -1,0 +1,71 @@
+<launch>
+    <!-- <include file="$(find orbbec_camera)/launch/gemini2.launch"/> -->
+    <include file="$(find realsense2_camera)/launch/rs_aligned_depth.launch"/>
+
+    <!-- <node name="rviz" pkg="rviz" type="rviz" args="-d $(find my_robot_navigation)/rviz/rtabmap.rviz"/> -->
+    
+    <!-- <node name="tf_bridge_cam_c" pkg="tf2_ros" type="static_transform_publisher" 
+          args="-0.533 0.025 0.929 -0.082 0.270 0.021 bridge camera_link"/> -->
+
+    <!-- <node name="tf_rs_bridge" pkg="tf2_ros" type="static_transform_publisher" 
+          args="-0.171 0.182 -0.204 -3.058 3.122 1.568 camera_right_link bridge"/> -->
+
+    <node name="footprint_to_camera_link" pkg="tf2_ros" type="static_transform_publisher" 
+          args="-0.574 -0.013 1.644 -0.018 0.184 -0.070 footprint camera_link"/>
+
+    <!--create aligned_depth_to_color/image_raw using depth_image_proc-->
+    <group ns="camera">
+        <node pkg="nodelet" type="nodelet" name="nodelet_manager" args="manager" />
+
+        <node pkg="nodelet" type="nodelet" name="nodelet1"
+                args="load depth_image_proc/register nodelet_manager">
+            <remap from="rgb/camera_info" to="color/camera_info"/>
+            <remap from="depth/camera_info" to="depth/camera_info"/>
+            <remap from="depth/image_rect" to="depth/image_raw"/>
+            <remap from="depth_registered/camera_info" to="aligned_depth_to_color/camera_info"/>    
+            <remap from="depth_registered/image_rect" to="aligned_depth_to_color/image_raw"/>
+        </node>
+
+        <node pkg="nodelet" type="nodelet" name="nodelet2"
+                args="load depth_image_proc/point_cloud_xyzrgb nodelet_manager">
+            <remap from="rgb/image_rect_color" to="color/image_raw"/>
+            <remap from="rgb/camera_info" to="color/camera_info"/>
+            <remap from="depth_registered/camera_info" to="aligned_depth_to_color/camera_info"/>
+            <remap from="depth_registered/image_rect" to="aligned_depth_to_color/image_raw"/>
+            <remap from="depth_registered/points" to="depth/color/points"/>
+        </node>
+    </group>
+
+
+    <arg name="camera_name" value ="camera"/>
+
+    <!-- Set parameters for RTABMAP -->
+    <arg name="depth_topic" default="/$(arg camera_name)/aligned_depth_to_color/image_raw" />
+    <arg name="rgb_topic" default="/$(arg camera_name)/color/image_raw" />
+    <arg name="camera_info_topic" default="/$(arg camera_name)/color/camera_info" />
+    <arg name="approx_sync" default="true" />
+    <arg name="rviz" default="true" />
+    <arg name="rtabmap_viz" default="false" />
+    <arg name="visual_odometry" default="true" />
+    <!-- <arg name="odom_topic" default="/odometry/filtered" /> -->
+    <arg name="rviz_cfg" default="$(find my_robot_navigation)/rviz/rtabmap.rviz" />
+    <arg name="rtabmap_args" default="--delete_db_on_start"/>
+
+    <!-- Include rtabmap.launch with specified parameters -->
+    <include file="$(find rtabmap_launch)/launch/rtabmap.launch">
+        <arg name="depth_topic" value="$(arg depth_topic)" />
+        <arg name="rgb_topic" value="$(arg rgb_topic)" />
+        <arg name="camera_info_topic" value="$(arg camera_info_topic)" />
+        <arg name="approx_sync" value="$(arg approx_sync)" />
+        <arg name="rviz" value="$(arg rviz)" />
+        <arg name="rtabmap_viz" value="$(arg rtabmap_viz)" />
+        <arg name="visual_odometry" value="$(arg visual_odometry)" />
+        <!-- <arg name="odom_topic" value="$(arg odom_topic)" /> -->
+        <arg name="rviz_cfg"  value="$(arg rviz_cfg)" />
+        <arg name="rtabmap_args"  value="$(arg rtabmap_args)" />
+        <arg name="approx_sync_max_interval"  value="0.1" />
+        <arg name="frame_id"  value="footprint" />
+
+
+    </include>
+</launch>

@@ -6,6 +6,7 @@ Panels:
       Expanded:
         - /Global Options1
         - /Status1
+        - /MarkerArray1
         - /MarkerArray1/Namespaces1
         - /Map1
       Splitter Ratio: 0.5
@@ -27,7 +28,7 @@ Panels:
   - Class: rviz/Time
     Name: Time
     SyncMode: 0
-    SyncSource: PointCloud2
+    SyncSource: ""
 Preferences:
   PromptSaveOnExit: true
 Toolbars:
@@ -260,15 +261,13 @@ Visualization Manager:
       Use rainbow: true
       Value: false
     - Class: rviz/MarkerArray
-      Enabled: true
-      Marker Topic: /hdl_graph_slam/markers
+      Enabled: false
+      Marker Topic: /occupied_cells_vis_array
       Name: MarkerArray
       Namespaces:
-        edges: true
-        loop_close_radius: true
-        nodes: true
+        {}
       Queue Size: 100
-      Value: true
+      Value: false
     - Alpha: 1
       Class: rviz/RobotModel
       Collision Enabled: false
@@ -416,17 +415,17 @@ Visualization Manager:
         Value: false
       Field of View: 0.7853981852531433
       Focal Point:
-        X: 4.751805305480957
-        Y: -5.816074371337891
-        Z: 0.45593932271003723
+        X: 4.187097549438477
+        Y: -4.123106002807617
+        Z: -2.018707275390625
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.855398416519165
+      Pitch: 0.8353977203369141
       Target Frame: <Fixed Frame>
-      Yaw: 0.7603924870491028
+      Yaw: 1.1153922080993652
     Saved: ~
 Window Geometry:
   Displays:

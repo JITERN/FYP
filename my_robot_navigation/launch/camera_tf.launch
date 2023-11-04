@@ -1,0 +1,10 @@
+<launch>
+    <!-- <node name="tf_bridge_cam_c" pkg="tf2_ros" type="static_transform_publisher" 
+          args="-0.533 0.025 0.929 -0.082 0.270 0.021 bridge camera_link"/> -->
+
+    <!-- <node name="tf_rs_bridge" pkg="tf2_ros" type="static_transform_publisher" 
+          args="-0.171 0.182 -0.204 -3.058 3.122 1.568 camera_right_link bridge"/> -->
+    
+    <node name="camera_link_to_footprint" pkg="tf2_ros" type="static_transform_publisher" 
+          args="-0.574 -0.013 1.644 -0.018 0.184 -0.070 camera_link footprint"/>
+</launch>          

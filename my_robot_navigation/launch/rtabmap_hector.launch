@@ -1,0 +1,5 @@
+<launch>
+<include file="$(find rtabmap_demos)/launch/demo_hector_mapping.launch">
+<remap from="/jn0/base_scan" to="asdas"/>
+</include>
+</launch>
