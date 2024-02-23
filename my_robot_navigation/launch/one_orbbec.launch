@@ -1,0 +1,229 @@
+<?xml version="1.0"?>
+
+<launch>
+   <!-- Choose visualization -->
+   <arg name="rviz"       default="false" />
+   <arg name="rtabmap_viz" default="true" />
+
+   <!-- ODOMETRY MAIN ARGUMENTS:
+        -"strategy"        : Strategy: 0=Frame-to-Map 1=Frame-to-Frame
+        -"feature"         : Feature type: 0=SURF 1=SIFT 2=ORB 3=FAST/FREAK 4=FAST/BRIEF 5=GFTT/FREAK 6=GFTT/BRIEF 7=BRISK
+        -"nn"              : Nearest neighbor strategy : 0=Linear, 1=FLANN_KDTREE, 2=FLANN_LSH, 3=BRUTEFORCE
+                             Set to 1 for float descriptor like SIFT/SURF
+                             Set to 3 for binary descriptor like ORB/FREAK/BRIEF/BRISK
+        -"max_depth"       : Maximum features depth (m)
+        -"min_inliers"     : Minimum visual correspondences to accept a transformation (m)
+        -"inlier_distance" : RANSAC maximum inliers distance (m)
+        -"local_map"       : Local map size: number of unique features to keep track
+        -"odom_info_data"  : Fill odometry info messages with inliers/outliers data.
+    -->
+   <arg name="strategy"        default="0" />
+   <arg name="feature"         default="6" />
+   <arg name="nn"              default="3" />
+   <arg name="max_depth"       default="4.0" />
+   <arg name="min_inliers"     default="20" />
+   <arg name="inlier_distance" default="0.02" />
+   <arg name="local_map"       default="1000" />
+   <arg name="odom_info_data"  default="true" />
+   <arg name="wait_for_transform"  default="true" />
+
+   <!-- sync rgb/depth images per camera -->
+  <group ns="camera">
+   <node pkg="rtabmap_sync" type="rgbd_sync" name="rgbd_sync">
+     <remap from="rgb/image"       to="/ob_camera_c/color/image_raw"/>
+     <remap from="depth/image"     to="/ob_camera_c/depth/image_raw"/>
+     <remap from="rgb/camera_info" to="/ob_camera_c/color/camera_info"/>
+     <param name="approx_sync"     value="true"/>
+     <!-- <param name="approx_sync_max_interval"     value="0.05"/> -->
+     <param name="queue_size"     value="1000"/>
+
+   </node>
+  </group>
+
+   
+
+
+  <group ns="rtabmap">
+    <!-- Visual SLAM (robot side) -->
+    <!-- args: "delete_db_on_start" and "udebug" -->
+    <node name="rtabmap" pkg="rtabmap_slam" type="rtabmap" output="screen">
+
+      <param name="Rtabmap/DetectionRate"  type="string"   value="0"/>
+      <param name="Mem/IncrementalMemory"  type="string"   value="true"/>
+      <param name="RGBD/StartAtOrigin"  type="string"   value="false"/>
+
+
+      <param name="subscribe_depth"  type="bool"   value="false"/>
+      <param name="subscribe_rgbd"   type="bool"   value="true"/>
+      <param name="subscribe_scan"   type="bool"   value="false"/>
+      <param name="subscribe_scan_cloud"   type="bool"   value="true"/>
+
+      <param name="visual_odometry"   type="bool"   value="false"/>
+      <!-- <param name="odom_topic"   type="string"   value="/odometry/filtered"/> -->
+
+
+
+    <param name="rgbd_cameras"    type="int"    value="1"/>
+	  <param name="frame_id"         type="string" value="base_footprint"/>
+    <param name="odom_frame_id"         type="string" value="odom"/>
+
+    <param name="approx_sync"       value="true"/> 
+
+	  <!-- <param name="gen_scan"         type="bool"   value="true"/> -->
+	  <param name="wait_for_transform" type="bool"   value="$(arg wait_for_transform)"/>
+	  <param name="map_negative_poses_ignored" type="bool"   value="true"/>        <!-- refresh grid map even if we are not moving-->
+	  <param name="map_negative_scan_empty_ray_tracing" type="bool" value="true"/> <!-- don't fill empty space between the generated scans-->
+
+      <remap from="rgbd_image"       to="/camera/rgbd_image"/>
+
+      <!-- <remap from="scan" to="/scan"/> -->
+      <remap from="grid_map" to="/map"/>
+      <remap from="scan_cloud" to="/rslidar_points"/>
+
+
+      <param name="Vis/EstimationType" type="string" value="0"/> <!-- should be 0 for multi-cameras -->
+      <param name="Vis/MinInliers"     type="string" value="20"/>
+      <param name="Vis/InlierDistance" type="string" value="$(arg inlier_distance)"/>
+    
+
+          <!-- RTAB-Map's parameters -->
+          <param name="RGBD/NeighborLinkRefining" type="string" value="true"/>
+          <param name="RGBD/ProximityBySpace"     type="string" value="true"/>
+          <param name="RGBD/AngularUpdate"        type="string" value="0.1"/>
+          <param name="RGBD/LinearUpdate"         type="string" value="0.1"/>
+          <param name="RGBD/OptimizeFromGraphEnd" type="string" value="false"/> <!--false = map tf is child of odom-->
+          <param name="RGBD/OptimizeMaxError" type="string" value="3"/>
+
+          <param name="Grid/Sensor"            type="string" value="0"/> <!-- [Create occupancy grid from selected sensor: 0=laser scan, 1=depth image(s) or 2=both laser scan and depth image(s).] -->
+          <param name="Grid/CellSize"       type="string" value="0.1"/>
+
+          <param name="Grid/RayTracing"       type="string" value="true"/>
+          <param name="Grid/GroundIsObstacle"          type="string" value="false"/>
+          <param name="Grid/RangeMax"                  type="string" value="20"/>
+          <param name="Grid/3D"       type="string" value="true"/>
+          <!-- <param name="Grid/FromDepth"       type="string" value="false"/>
+          <param name="Grid/FootprintHeight"       type="string" value="1.8"/>
+          <param name="Grid/FootprintLength"       type="string" value="0.75"/>
+          <param name="Grid/FootprintWidth"       type="string" value="0.7"/> -->
+
+
+
+
+          <param name="Optimizer/Robust" type="string" value="false"/>
+
+          
+          <param name="Reg/Force3DoF"             type="string" value="true"/>
+          <param name="Reg/Strategy"              type="string" value="2"/>     <!-- 0=Visual, 1=ICP, 2=Visual+ICP -->
+
+          <!-- 2D ICP parameters -->
+          <!-- <param name="Icp/VoxelSize"                 type="string" value="0.1"/>
+          <param name="Icp/MaxCorrespondenceDistance" type="string" value="0.1"/> -->
+
+          <!-- 3D ICP parameters -->
+      <param name="subscribe_depth"  type="bool"   value="false"/>
+      <param name="subscribe_rgbd"   type="bool"   value="true"/>
+      <param name="subscribe_scan"   type="bool"   value="false"/>
+      <param name="subscribe_scan_cloud"   type="bool"   value="true"/>
+
+            <param name="visual_odometry"   type="bool"   value="false"/>
+                        <!-- <param name="odom_topic"   type="string"   value="/odometry/filtered"/> -->
+
+
+
+    <param name="rgbd_cameras"    type="int"    value="1"/>
+	  <param name="frame_id"         type="string" value="base_footprint"/>
+    <param name="odom_frame_id"         type="string" value="odom"/>
+
+    <param name="approx_sync"       value="true"/> 
+
+	  <!-- <param name="gen_scan"         type="bool"   value="true"/> -->
+	  <param name="wait_for_transform" type="bool"   value="$(arg wait_for_transform)"/>
+	  <param name="map_negative_poses_ignored" type="bool"   value="true"/>        <!-- refresh grid map even if we are not moving-->
+	  <param name="map_negative_scan_empty_ray_tracing" type="bool" value="true"/> <!-- don't fill empty space between the generated scans-->
+
+      <remap from="rgbd_image"       to="/camera/rgbd_image"/>
+
+      <!-- <remap from="scan" to="/scan"/> -->
+      <remap from="grid_map" to="/map"/>
+      <remap from="scan_cloud" to="/rslidar_points"/>
+
+
+      <param name="Vis/EstimationType" type="string" value="0"/> <!-- should be 0 for multi-cameras -->
+      <param name="Vis/MinInliers"     type="string" value="20"/>
+      <param name="Vis/InlierDistance" type="string" value="$(arg inlier_distance)"/>
+    
+
+          <!-- RTAB-Map's parameters -->
+          <param name="RGBD/NeighborLinkRefining" type="string" value="true"/>
+          <param name="RGBD/ProximityBySpace"     type="string" value="true"/>
+          <param name="RGBD/AngularUpdate"        type="string" value="0.1"/>
+          <param name="RGBD/LinearUpdate"         type="string" value="0.1"/>
+          <param name="RGBD/OptimizeFromGraphEnd" type="string" value="false"/> <!--false = map tf is child of odom-->
+          <param name="RGBD/OptimizeMaxError" type="string" value="3"/>
+
+          <param name="Grid/Sensor"            type="string" value="0"/> <!-- [Create occupancy grid from selected sensor: 0=laser scan, 1=depth image(s) or 2=both laser scan and depth image(s).] -->
+          <param name="Grid/CellSize"       type="string" value="0.1"/>
+
+          <param name="Grid/RayTracing"       type="string" value="true"/>
+          <param name="Grid/GroundIsObstacle"          type="string" value="false"/>
+          <param name="Grid/RangeMax"                  type="string" value="20"/>
+          <param name="Grid/3D"       type="string" value="true"/>
+          <!-- <param name="Grid/FromDepth"       type="string" value="false"/>
+          <param name="Grid/FootprintHeight"       type="string" value="1.8"/>
+          <param name="Grid/FootprintLength"       type="string" value="0.75"/>
+          <param name="Grid/FootprintWidth"       type="string" value="0.7"/> -->
+
+
+
+
+          <param name="Optimizer/Robust" type="string" value="false"/>
+
+          
+          <param name="Reg/Force3DoF"             type="string" value="true"/>
+          <param name="Reg/Strategy"              type="string" value="0"/>     <!-- 0=Visual, 1=ICP, 2=Visual+ICP -->
+
+          <!-- 2D ICP parameters -->
+          <!-- <param name="Icp/VoxelSize"                 type="string" value="0.1"/>
+          <param name="Icp/MaxCorrespondenceDistance" type="string" value="0.1"/> -->
+
+          <!-- 3D ICP parameters -->
+        <param name="Icp/VoxelSize"                  type="string" value="0.3"/>
+        <param name="Icp/PointToPlaneK"              type="string" value="20"/>
+        <param name="Icp/PointToPlaneRadius"         type="string" value="0"/>
+        <param name="Icp/PointToPlane"               type="string" value="true"/>
+        <param name="Icp/Iterations"                 type="string" value="10"/>
+        <param name="Icp/Epsilon"                    type="string" value="0.001"/>
+        <param name="Icp/MaxTranslation"             type="string" value="3"/>
+        <param name="Icp/MaxCorrespondenceDistance"  type="string" value="1"/>
+        <param name="Icp/PM"                         type="string" value="true"/> 
+        <param name="Icp/PMOutlierRatio"             type="string" value="0.7"/>
+        <param name="Icp/CorrespondenceRatio"        type="string" value="0.2"/>
+
+          <param name="proj_max_ground_angle" value="5"/>
+          <param name="proj_max_ground_height" value="0.2"/>
+          <param name="proj_max_height" value="2"/>
+          <param name="proj_min_cluster_size" value="1"/>
+    </node>
+
+
+
+    <!-- Visualisation RTAB-Map -->
+    <node if="$(arg rtabmap_viz)" pkg="rtabmap_viz" type="rtabmap_viz" name="rtabmap_viz" args="-d $(find rtabmap_demos)/launch/config/rgbd_gui.ini" output="screen">
+      <param name="subscribe_depth"  type="bool"   value="false"/>
+      <param name="subscribe_rgbd"   type="bool"   value="true"/>
+      <!-- <param name="subscribe_odom_info" type="bool"   value="$(arg odom_info_data)"/> -->
+      <param name="frame_id"            type="string" value="base_footprint"/>
+      <param name="odom_frame_id"            type="string" value="odom"/>
+      <param name="rgbd_cameras"       type="int"    value="1"/>
+      <param name="wait_for_transform"  type="bool"   value="$(arg wait_for_transform)"/>
+
+      <remap from="rgbd_image"       to="/camera/rgbd_image"/>
+
+    </node>
+
+  </group>
+
+  <!-- Visualization RVIZ -->
+  <node pkg="rviz" type="rviz" name="rviz"  args="-d $(find my_robot_navigation)/rviz/rtabmap.rviz" output="screen"/>
+
+</launch>

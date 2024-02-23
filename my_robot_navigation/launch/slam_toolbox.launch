@@ -1,0 +1,12 @@
+<launch>
+
+  <node pkg="slam_toolbox" type="lifelong_slam_toolbox_node" name="slam_toolbox" output="screen">
+    <rosparam command="load" file="$(find my_robot_navigation)/config/mapper_params_lifelong.yaml" />
+      <remap from="/scan" to= "/base_scan"/>
+
+  </node>
+
+
+<node name="rviz" pkg="rviz" type="rviz" args="-d $(find my_robot_navigation)/rviz/slam_toolbox.rviz"/>
+
+</launch>

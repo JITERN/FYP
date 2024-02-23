@@ -1,0 +1,36 @@
+
+<launch>
+  <group ns="camera1">
+   <node pkg="rtabmap_sync" type="rgbd_sync" name="rgbd_sync1">
+     <remap from="rgb/image"       to="/ob_camera_c/color/image_raw"/>
+     <remap from="depth/image"     to="/ob_camera_c/depth/image_raw"/>
+     <remap from="rgb/camera_info" to="/ob_camera_c/color/camera_info"/>
+     <param name="approx_sync"     value="true"/>
+     <!-- <param name="approx_sync_max_interval"     value="0.02"/> -->
+     <param name="queue_size"     value="100"/>
+
+   </node>
+  </group>
+  <group ns="camera2">
+   <node pkg="rtabmap_sync" type="rgbd_sync" name="rgbd_sync2">
+    <remap from="rgb/image"       to="/ob_camera_l/color/image_raw"/>
+     <remap from="depth/image"     to="/ob_camera_l/depth/image_raw"/>
+     <remap from="rgb/camera_info" to="/ob_camera_l/color/camera_info"/>
+     <param name="approx_sync"     value="true"/>
+     <!-- <param name="approx_sync_max_interval"     value="0.02"/> -->
+          <param name="queue_size"     value="100"/>
+
+   </node>
+  </group>
+  <group ns="camera3">
+   <node pkg="rtabmap_sync" type="rgbd_sync" name="rgbd_sync3">
+    <remap from="rgb/image"       to="/ob_camera_r/color/image_raw"/>
+     <remap from="depth/image"     to="/ob_camera_r/depth/image_raw"/>
+     <remap from="rgb/camera_info" to="/ob_camera_r/color/camera_info"/>
+     <param name="approx_sync"     value="true"/>
+     <!-- <param name="approx_sync_max_interval"     value="0.02"/> -->
+          <param name="queue_size"     value="100"/>
+
+   </node>
+  </group>
+  </launch>

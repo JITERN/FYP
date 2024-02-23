@@ -7,4 +7,4 @@
     
     <node name="camera_link_to_footprint" pkg="tf2_ros" type="static_transform_publisher" 
           args="-0.574 -0.013 1.644 -0.018 0.184 -0.070 camera_link footprint"/>
-</launch>          
+</launch>   
