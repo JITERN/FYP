@@ -7,47 +7,24 @@
 
 
    <!-- sync rgb/depth images per camera -->
-  <!-- <group ns="camera1">
-   <node pkg="rtabmap_sync" type="rgbd_sync" name="rgbd_sync1">
-     <remap from="rgb/image"       to="/ob_camera_l/color/image_raw"/>
-     <remap from="depth/image"     to="/ob_camera_l/depth/image_raw"/>
-     <remap from="rgb/camera_info" to="/ob_camera_l/color/camera_info"/>
-     <param name="approx_sync"     value="true"/>
-     <param name="approx_sync_max_interval"     value="0.03"/>
-     <param name="queue_size"     value="1000"/>
-
-   </node>
-  </group>
-  <group ns="camera2">
-   <node pkg="rtabmap_sync" type="rgbd_sync" name="rgbd_sync2">
-    <remap from="rgb/image"       to="/ob_camera_c/color/image_raw"/>
-     <remap from="depth/image"     to="/ob_camera_c/depth/image_raw"/>
-     <remap from="rgb/camera_info" to="/ob_camera_c/color/camera_info"/>
-     <param name="approx_sync"     value="true"/>
-     <param name="approx_sync_max_interval"     value="0.03"/>
-          <param name="queue_size"     value="1000"/>
-
-   </node>
-  </group> -->
-
   <group ns="camera">
    <node pkg="rtabmap_sync" type="rgbd_sync" name="rgbd_sync">
      <remap from="rgb/image"       to="/ob_camera_c/color/image_raw"/>
      <remap from="depth/image"     to="/ob_camera_c/depth/image_raw"/>
      <remap from="rgb/camera_info" to="/ob_camera_c/color/camera_info"/>
      <param name="approx_sync"     value="true"/>
-     <param name="approx_sync_max_interval"     value="0.03"/>
+     <!-- <param name="approx_sync_max_interval"     value="0.03"/> -->
      <param name="queue_size"     value="1000"/>
-  </node> 
+
+   </node>
   </group>
 
-
-
+   
   <group ns="rtabmap">
     <!-- Visual SLAM (robot side) -->
     <!-- args: "delete_db_on_start" and "udebug" -->
     <node name="rtabmap" pkg="rtabmap_slam" type="rtabmap" output="screen">
-      <param name="pub_loc_pose_only_when_localizing"        type="bool"   value="true"/>
+      <!-- <param name="pub_loc_pose_only_when_localizing"        type="bool"   value="true"/> -->
 
       <param name="subscribe_depth"        type="bool"   value="false"/>
       <param name="subscribe_rgb"          type="bool"   value="false"/>
@@ -66,12 +43,10 @@
 
   	  <!-- <param name="gen_scan"         type="bool"   value="true"/> -->
 	    <param name="wait_for_transform"    type="bool"   value="true"/>
-	    <param name="map_always_update"     type="bool"   value="true"/>        <!-- refresh grid map even if we are not moving-->
-	    <param name="map_empty_ray_tracing" type="bool"   value="true"/> <!-- fill empty space between the generated scans-->
+	    <param name="map_always_update"     type="bool"   value="false"/>        <!-- refresh grid map even if we are not moving-->
+	    <param name="map_empty_ray_tracing" type="bool"   value="false"/> <!-- fill empty space between the generated scans-->
 
       <remap from="rgbd_image"       to="/camera/rgbd_image"/>
-      <remap from="rgbd_image0"       to="/camera1/rgbd_image"/>
-      <!-- <remap from="rgbd_image1"       to="/camera2/rgbd_image"/> -->
 
       <remap from="scan" to="/scan"/>
       <!-- <remap from="scan_cloud" to="/rslidar_points"/> -->
@@ -86,23 +61,20 @@
       <param name="Rtabmap/LoopThr" type="string" value="0.11"/> 
       <param name="Rtabmap/LoopRatio" type="string" value="0"/> 
 
-
       <param name="Vis/FeatureType"     type="string" value="8"/>
       <param name="Kp/DetectorStrategy"     type="string" value="8"/>
 
       <!-- 0=SURF 1=SIFT 2=ORB 3=FAST/FREAK 4=FAST/BRIEF 5=GFTT/FREAK 6=GFTT/BRIEF 7=BRISK 8=GFTT/ORB 9=KAZE 10=ORB-OCTREE 11=SuperPoint 12=SURF/FREAK 13=GFTT/DAISY 14=SURF/DAISY 15=PyDetector -->
-      <param name="Vis/MaxFeatures"     type="string" value="1000"/>
+      <param name="Vis/MaxFeatures"     type="string" value="1500"/>
       <param name="Vis/DepthAsMask"     type="string" value="true"/>
       <param name="Mem/DepthAsMask"     type="string" value="true"/>
     
       <param name="RGBD/Enabled"                   type="string" value="true"/>
-      <param name="Rtabmap/ImageBufferSize"        type="string" value="0"/>
+      <param name="Rtabmap/ImageBufferSize"        type="string" value="10"/>
       <param name="Rtabmap/DetectionRate"          type="string" value="2"/>
-      <param name="Rtabmap/TimeThr"                type="string" value="0"/>
-
       <param name="Rtabmap/StartNewMapOnLoopClosure" type="string" value="false"/>
       <param name="Mem/RehearsalSimilarity"        type="string" value="0.4"/>
-      <param name="Mem/STMSize"                    type="string" value="10"/>
+      <param name="Mem/STMSize"                    type="string" value="0"/>
       <param name="Mem/RehearsalIdUpdatedToNewOne" type="string" value="true"/>
       <param name="Mem/BadSignaturesIgnored"       type="string" value="true"/>
       <param name="Mem/IncrementalMemory"          type="string" value="true"/>
@@ -111,24 +83,26 @@
 
           <param name="RGBD/NeighborLinkRefining" type="string" value="true"/>
           <param name="RGBD/ProximityBySpace"     type="string" value="true"/>
-          <param name="RGBD/AngularUpdate"        type="string" value="0.01"/>
-          <param name="RGBD/LinearUpdate"         type="string" value="0.01"/>
+          <param name="RGBD/AngularUpdate"        type="string" value="0.1"/>
+          <param name="RGBD/LinearUpdate"         type="string" value="0.1"/>
           <param name="RGBD/OptimizeFromGraphEnd" type="string" value="false"/><!--false = map tf is child of odom-->
-          <param name="RGBD/OptimizeMaxError"     type="string" value="0"/>
           <param name="RGBD/NewMapOdomChangeDistance"  type="string" value="0"/>
+
 
           <param name="Grid/Sensor"            type="string" value="0"/> <!-- [Create occupancy grid from selected sensor: 0=laser scan, 1=depth image(s) or 2=both laser scan and depth image(s).] -->
           <param name="Grid/CellSize"           type="string" value="0.1"/>
-          <param name="Grid/ClusterRadius"       type="string" value="0.2"/>
+          <!-- <param name="Grid/ClusterRadius"       type="string" value="0.3"/>
           <param name="Grid/MinClusterSize"     type="string" value="20"/>
-          <param name="Grid/NoiseFilteringRadius"    type="string" value="0"/>
-          <param name="Grid/NoiseFilteringMinNeighbors"    type="string" value="5"/>
+          <param name="Grid/NoiseFilteringRadius"    type="string" value="0.3"/>
+          <param name="Grid/NoiseFilteringMinNeighbors"    type="string" value="20"/> -->
 
           <param name="Grid/RayTracing"                type="string" value="true"/>
           <param name="Grid/GroundIsObstacle"          type="string" value="false"/>
-          <param name="Grid/RangeMin"                  type="string" value="0"/>
-          <param name="Grid/RangeMax"                  type="string" value="0"/>
-          <param name="Grid/3D"                        type="string" value="true"/>
+          <param name="Grid/RangeMin"                  type="string" value="0.5"/>
+          <param name="Grid/RangeMax"                  type="string" value="20"/>
+
+          <param name="Grid/3D"       type="string" value="true"/>
+          <param name="Grid/NormalsSegmentation"  value="false"/>
 
           <param name="Grid/FootprintHeight"       type="string" value="1.8"/>
           <param name="Grid/FootprintLength"       type="string" value="0.75"/>
@@ -140,41 +114,34 @@
           <param name="GridGlobal/FootprintRadius"       type="string" value="0.5"/>
 
           <param name="Optimizer/Robust" type="string" value="false"/>
+          <param name="RGBD/OptimizeMaxError"     type="string" value="3"/>
+
+
 
           <param name="Reg/Force3DoF"             type="string" value="true"/>
           <param name="Reg/Strategy"              type="string" value="2"/>     <!-- 0=Visual, 1=ICP, 2=Visual+ICP -->
 
           <!-- 2D ICP parameters -->
-          <param name="Icp/VoxelSize"                 type="string" value="0.1"/>
+          <param name="Icp/VoxelSize"                 type="string" value="0.05"/>
           <param name="Icp/MaxCorrespondenceDistance" type="string" value="0.1"/>
-          <param name="Icp/Iterations"                 type="string" value="30"/>
-
 
           <!-- 3D ICP parameters -->
-        <!-- <param name="Icp/VoxelSize"                  type="string" value="0.1"/>
+        <!-- <param name="Icp/VoxelSize"                  type="string" value="0.3"/>
         <param name="Icp/PointToPlaneK"              type="string" value="20"/>
         <param name="Icp/PointToPlaneRadius"         type="string" value="0"/>
         <param name="Icp/PointToPlane"               type="string" value="true"/>
         <param name="Icp/Iterations"                 type="string" value="10"/>
-        <param name="Icp/Epsilon"                    type="string" value="0.001"/> -->
-        <param name="Icp/MaxRotation"                type="string" value="0.78"/>
-        <param name="Icp/MaxTranslation"             type="string" value="0.2"/>
-
-        <!-- <param name="Icp/MaxCorrespondenceDistance"  type="string" value="1"/>
-        <param name="Icp/Strategy"                   type="string" value="1"/> 
+        <param name="Icp/Epsilon"                    type="string" value="0.001"/>
+        <param name="Icp/MaxTranslation"             type="string" value="3"/>
+        <param name="Icp/MaxCorrespondenceDistance"  type="string" value="1"/>
+        <param name="Icp/Strategy"                   type="string" value="true"/> 
         <param name="Icp/OutlierRatio"               type="string" value="0.7"/>
         <param name="Icp/CorrespondenceRatio"        type="string" value="0.2"/>
-        <param name="Icp/PointToPlaneGroundNormalsUp"      type="string" value="0.0"/>
-        <param name="Icp/Force4DOF"                  type="string" value="true"/>
-        <param name="Icp/RangeMax"                  type="string" value="20"/>
-        <param name="Icp/RangeMin"                  type="string" value="1.5"/>
+        <param name="Icp/PointToPlaneGroundNormalsUp"      type="string" value="1"/>
 
-        <param name="Icp/Force4DOF"                  type="string" value="true"/>
-
-        <param name="Grid/NormalsSegmentation"  value="false"/>
-        <param name="Grid/MaxGroundHeight" value="0.2"/>
-        <param name="Grid/MaxObstacleHeight" value="1.8"/> -->
-        <param name="GridGlobal/UpdateError" value="0.01"/>
+          <param name="Grid/MaxGroundAngle" value="20"/>
+          <param name="Grid/MaxGroundHeight" value="0.2"/>
+          <param name="Grid/MaxObstacleHeight" value="1.8"/> -->
 
 
 
@@ -190,9 +157,6 @@
       <param name="wait_for_transform"  type="bool"   value="true"/>
 
       <remap from="rgbd_image"       to="/camera/rgbd_image"/>
-      <remap from="rgbd_image0"       to="/camera1/rgbd_image"/>
-      <!-- <remap from="rgbd_image1"       to="/camera2/rgbd_image"/> -->
-
     </node>
 
   </group>
