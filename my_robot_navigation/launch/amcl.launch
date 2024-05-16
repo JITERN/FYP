@@ -14,9 +14,10 @@
         <param name="tf_broadcast" value="true" />
         <param name="use_map_topic" value="true" />
 
-        <param name="initial_pose_x" value="0.0"/>
-        <param name="initial_pose_y" value="0.0"/>
-        <param name="initial_pose_a" value="0.0"/>
+        <!-- <param name="initial_pose_x" value="-1.8"/> -->
+        <param name="initial_pose_x" value="0"/>
+        <param name="initial_pose_y" value="0"/>
+        <param name="initial_pose_a" value="0"/>
     </node>
 
     <node name="rviz" pkg="rviz" type="rviz" args="-d $(find my_robot_navigation)/rviz/gmapping.rviz"/>

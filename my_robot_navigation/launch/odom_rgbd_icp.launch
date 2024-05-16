@@ -1,0 +1,68 @@
+<launch> 
+   <arg name="num_cameras" default="2" />
+
+   <!-- sync rgb/depth images per camera -->
+  <!-- <group ns="camera1">
+   <node pkg="rtabmap_sync" type="rgbd_sync" name="rgbd_sync1">
+     <remap from="rgb/image"       to="/ob_camera_l/color/image_raw"/>
+     <remap from="depth/image"     to="/ob_camera_l/depth/image_raw"/>
+     <remap from="rgb/camera_info" to="/ob_camera_l/color/camera_info"/>
+     <param name="approx_sync"     value="true"/>
+     <param name="approx_sync_max_interval"     value="0.03"/>
+     <param name="queue_size"     value="1000"/>
+
+   </node>
+  </group>
+  <group ns="camera2">
+   <node pkg="rtabmap_sync" type="rgbd_sync" name="rgbd_sync2">
+    <remap from="rgb/image"       to="/ob_camera_c/color/image_raw"/>
+     <remap from="depth/image"     to="/ob_camera_c/depth/image_raw"/>
+     <remap from="rgb/camera_info" to="/ob_camera_c/color/camera_info"/>
+     <param name="approx_sync"     value="true"/>
+     <param name="approx_sync_max_interval"     value="0.03"/>
+          <param name="queue_size"     value="1000"/>
+
+   </node>
+  </group> -->
+
+  <!-- <group ns="camera">
+   <node pkg="rtabmap_sync" type="rgbd_sync" name="rgbd_sync">
+     <remap from="rgb/image"       to="/ob_camera_c/color/image_raw"/>
+     <remap from="depth/image"     to="/ob_camera_c/depth/image_raw"/>
+     <remap from="rgb/camera_info" to="/ob_camera_c/color/camera_info"/>
+     <param name="approx_sync"     value="true"/>
+     <param name="approx_sync_max_interval"     value="0.0"/>
+     <param name="queue_size"     value="1000"/>
+  </node> 
+  </group> -->
+
+
+    <node pkg="rtabmap_odom" type="rgbdicp_odometry" name="rgbdicp_odometry">
+        <param name="initial_pose"      type="string"   value="0 0 0 0 0 0"/>
+        <param name="frame_id"          type="string"   value="base_footprint"/>
+        <param name="Reg/Force3DoF"      type="string"   value="true"/>
+        <param name="Odom/Holonomic"     type="string"   value="false"/>
+
+        
+        <param name="Vis/MinInliers"     type="string"   value="6"/>
+        <param name="Odom/Strategy"     type="string"   value="1"/>
+        <param name="Vis/MaxFeatures"     type="string"   value="1000"/>
+        <param name="Vis/FeatureType"     type="string"   value="6"/>
+        <param name="subscribe_rgbd"         type="bool"   value="true"/>
+        <remap from="rgbd_image"       to="/camera/rgbd_image"/>
+
+        <param name="subscribe_scan"         type="bool"   value="true"/>
+        <param name="deskewing_slerp"   type="bool"     value="true"/>
+        <remap from="scan" to="/scan"/>
+
+        <remap from="rgb/image"       to="/ob_camera_c/color/image_raw"/>
+        <remap from="depth/image"     to="/ob_camera_c/depth/image_raw"/>
+        <remap from="rgb/camera_info" to="/ob_camera_c/color/camera_info"/>
+        <param name="approx_sync"     value="true"/>
+        <param name="approx_sync_max_interval"     value="0.05"/>
+        <param name="queue_size"     value="1000"/>
+  </node> 
+
+    <node pkg="rviz" type="rviz" name="rviz"  args="-d $(find my_robot_navigation)/rviz/rtabmap.rviz" output="screen"/>
+
+</launch>
