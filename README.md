@@ -12,7 +12,7 @@ Brief description about the package.
 
 ### Dependencies
 
-- RTAB-Map installed from source (https://github.com/introlab/rtabmap_ros) with -DRTABMAP_SYNC_MULTI_RGBD=ON added to catkin_make
+- RTAB-Map installed and built from source with -DRTABMAP_SYNC_MULTI_RGBD=ON added to catkin_make, official installation instructions: https://github.com/introlab/rtabmap_ros?tab=readme-ov-file#build-from-source
 
 ### Building
 
