@@ -72,9 +72,25 @@ On another terminal, record new rosbag with only TF data for localization trajec
 rosparam set use_sim_time true
 rosbag record /tf /tf_static
 ```
-
+On another terminal
 ```bash
 rosbag play --clock lab.bag
 ```
 
 Use Python evo package to process the new rosbag
+```bash
+evo_traj bag <new_rosbag_name>.bag /tf:map.base_footprint --save_as_tum
+```
+One .tum file will be created, rename to match the sensors used (i.e. 1cam2DLidar.tum)
+
+Next, generate .zip file results
+```bash
+#evo_ape tum <ground_truth>.tum <test>.tum --save_results <output_file_path>.zip
+evo_ape tum 2cam3DLidar_REF.tum 1cam2DLidar.tum --save_results ape/1cam2DLidar.zip
+```
+Repeat the above process with different sensor combinations to get multiple .zip files in the ape/ folder
+
+Compare all the results
+```bash
+evo_res ape/*.zip
+```
