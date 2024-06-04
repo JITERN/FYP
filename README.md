@@ -37,11 +37,16 @@ Parameters:
 
 Note: scan and cloud cannot be set to true at the same time.
 
-Example 1: Mapping with 3DLidar+2RGBD using both sensors for grid creation
+Mapping with 3DLidar+2RGBD using both sensors for grid creation
 ```bash
-roslaunch my_robot_navigation rtabmap.launch	num_cameras:=2	scan:=false	cloud:=true	grid_sensor:=2	mapping:=true
+roslaunch my_robot_navigation rtabmap.launch  num_cameras:=2  scan:=false  cloud:=true  grid_sensor:=2  mapping:=true
 ```
-Example 2: Localizing with 2DLidar+1RGBD
+
+To clear the rtabmap database and restart mapping from scratch, click "Edit>Delete memory" in RTAB-Map Viz window. Always click "Detection>Trigger a new map" on every seperate mapping session.
+
+Localizing with 2DLidar+1RGBD
 ```bash
-roslaunch my_robot_navigation rtabmap.launch	num_cameras:=1	scan:=true	cloud:=false	grid_sensor:=2 
+roslaunch my_robot_navigation rtabmap.launch  num_cameras:=1  scan:=true  cloud:=false  grid_sensor:=2 
 ```
+
+## Rosbags
