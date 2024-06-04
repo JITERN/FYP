@@ -1,6 +1,6 @@
 ## Overview
 
-Brief description about the package.
+This repo documents how RTAB-Map can be used to compare the mapping and localization performance of various sensor combinations on a robotic wheelchair.
 
 **Maintainer:** [Jit Ern](limjitern@gmail.com)
 
@@ -13,82 +13,37 @@ Brief description about the package.
 ### Dependencies
 
 - RTAB-Map installed and built from source with -DRTABMAP_SYNC_MULTI_RGBD=ON added to catkin_make, official installation instructions: https://github.com/introlab/rtabmap_ros?tab=readme-ov-file#build-from-source
-
+- Python evo package to evaluate the localization accuracy: github.com/MichaelGrupp/evo
+  
 ### Building
 
+In a catkin workspace
 ```bash
-# How to build the package
+# cd ~/catkin_ws/src
+# git clone https://github.com/JITERN/FYP.git
+# cd ..
+# catkin_make
+# source devel/setup.bash
 ```
-
 
 ## Usage
 
-How to run the package.
+Parameters:
+- num_cameras: 1 or 2
+- scan: true or false
+- cloud: true or false
+- grid: 0,1 or 2 (Create occupancy grid from selected sensor: 0=laser scan, 1=depth image(s) or 2=both laser scan and depth image(s).)
+- mapping: true or false (defaults to false = localization only mode)
 
+Note: scan and cloud cannot be set to true at the same time.
+
+Example 1: Mapping with 3DLidar+2RGBD using both sensors for grid creation
 ```bash
-# roslaunch pkg_name launch_file
+# roslaunch my_robot_navigation rtabmap.launch	num_cameras:=2	scan:=false	cloud:=true	grid_sensor:=2	mapping:=true
 # ...
 ```
-
-
-## Config
-
-Config file folder/set 1
-
-* **config_file_1.yaml** Shortly explain the content of this config file
-
-Config file folder/set 2
-
-* **...**
-
-
-## Nodes
-
-### NODE_A_NAME
-
-Node_A description.
-
-#### Subscribed Topics
-
-* **`/topic_name`** ([msgs_type])
-
-	What the message contains.
-
-
-#### Published Topics
-
-* **`topic_name`** ([msgs_type])
-
-	What the message contains.
-
-#### Services
-
-* **`sevice_name`** ([srvs_tpye])
-
-	Brief explanation of this service. For example, you can trigger the service from the console with
-
-		rosservice call /this_pkg/sevice_name
-
-
-#### Parameters
-
-* **`param_1`** (data_type, default: "DEFAULT_VALUE")
-
-	param_1 description
-
-* **`param_2`** (data_type, default: "DEFAULT_VALUE")
-
-	param_2 description
-
-
-### NODE_B_NAME
-
-...
-
-
-## Reference
-
-...
-
----
-
+Example 1: Localizing with 2DLidar+1RGBD
+```bash
+# roslaunch my_robot_navigation rtabmap.launch	num_cameras:=1	scan:=true	cloud:=false	grid_sensor:=2 
+# ...
+```
