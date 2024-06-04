@@ -37,16 +37,44 @@ Parameters:
 
 Note: scan and cloud cannot be set to true at the same time.
 
-Mapping with 3DLidar+2RGBD using both sensors for grid creation
+### Mapping 
+Example with 3DLidar+2RGBD using both sensors for grid creation
 ```bash
 roslaunch my_robot_navigation rtabmap.launch  num_cameras:=2  scan:=false  cloud:=true  grid_sensor:=2  mapping:=true
 ```
 
 To clear the rtabmap database and restart mapping from scratch, click "Edit>Delete memory" in RTAB-Map Viz window. Always click "Detection>Trigger a new map" on every seperate mapping session.
 
-Localizing with 2DLidar+1RGBD
+Play a rosbag or drive the robot in real-time, CTRL-C in the terminal where RTAB-Map is running to end the session and the session will be automatically saved.
+```bash
+rosbag play --clock lab.bag
+```
+
+To export the 2D occupancy grid
+```bash
+#rtabmap-databaseViewer <path_to_rtabmap.db>
+rtabmap-databaseViewer .ros/rtabmap.db 
+```
+Click "File>Regenerate optimized 2D map", then "File>Export optimized 2D map"
+
+### Localization
+Example with 2DLidar+1RGBD
 ```bash
 roslaunch my_robot_navigation rtabmap.launch  num_cameras:=1  scan:=true  cloud:=false  grid_sensor:=2 
 ```
 
-## Rosbags
+Start roscore
+```bash
+roscore
+```
+On another terminal, record new rosbag with only TF data for localization trajectory evaluation
+```bash
+rosparam set use_sim_time true
+rosbag record /tf /tf_static
+```
+
+```bash
+rosbag play --clock lab.bag
+```
+
+Use Python evo package to process the new rosbag
