@@ -94,3 +94,18 @@ Compare all the results
 ```bash
 evo_res ape/*.zip
 ```
+
+### ROSbags
+Available at https://entuedu-my.sharepoint.com/:f:/r/personal/limj0231_e_ntu_edu_sg/Documents/FYP?csf=1&web=1&e=XMSFgL
+
+When using ROSbags recorded at ICH, play those in the folder 3DlidarTF_removed with the following running
+```bash
+rosrun tf2_ros static_transform_publisher -0.09 0 1.865 0 0.015 0.015 base_link rslidar
+```
+
+For recording more ROSbags on the MRCA, use 
+```bash
+rosbag record /tf /tf_static /odometry/filtered /user/joy /cmd_vel /encoders/odom /imu /scan /rslidar_points --node=/laserscan_multi_merger -e '/ob_camera_(.*)/(color|depth)/(image_raw|camera_info)' "
+```
+
+
