@@ -1,10 +1,8 @@
-# scooping
-
 ## Overview
 
 Brief description about the package.
 
-**Maintainer:** [J-Anne](janne.yow@gmail.com)
+**Maintainer:** [Jit Ern](limjitern@gmail.com)
 
 > *This package has been tested under ROS Noetic on Ubuntu 20.04.*
 
@@ -94,4 +92,3 @@ Node_A description.
 
 ---
 
-Copyright (c) 2023 Rehabilitation Research Institute of Singapore.
